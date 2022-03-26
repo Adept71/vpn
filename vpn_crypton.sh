@@ -64,7 +64,7 @@ do
 echo "
 [Interface]
 PrivateKey = $(cat /etc/wireguard/$ACC_NUM'_private')
-Address = 10.0.0.'$ACC_NUM'/32
+Address = 10.0.0.$ACC_NUM/32
 DNS = 8.8.8.8
 
 [Peer]
