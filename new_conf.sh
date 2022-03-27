@@ -14,7 +14,7 @@ sleep 2
 echo -e '\n\e[42mChecking profiles quantity\e[0m\n' && sleep 2
 
 function checkLast { 
-  cat /etc/wireguard/wg0.conf | tail -1 | grep -oP '(?<='10.0.0.').*' | grep -o '^[^/]*'
+  echo $(cat /etc/wireguard/wg0.conf | tail -1 | grep -oP '(?<='10.0.0.').*' | grep -o '^[^/]*')
 }
 
 function checkNTLast {
@@ -22,7 +22,7 @@ function checkNTLast {
 }
 
 function checkNNTLast {
-  cat /etc/wireguard/wg0.conf | tail -1 | grep -oP '(?<='10.').*' | grep -o '^[^'.checkNTLast']*'
+  echo $(cat /etc/wireguard/wg0.conf | tail -1 | grep -oP '(?<='10.').*' | grep -o '^[^'.checkNTLast']*')
 }
 
 checkLast="$(checkLast)"
@@ -30,6 +30,11 @@ checkNTLast="$(checkNTLast)"
 checkNNTLast="$(checkNNTLast)"
   
 if (( $checkLast <= 244 )); then
+
+checkLast="$(checkLast)"
+checkNTLast="$(checkNTLast)"
+checkNNTLast="$(checkNNTLast)"
+
 echo -e '\n\e[42mGenerating keys for confings\e[0m\n' && sleep 2
 for ACC_NUM in $( eval echo {$(($checkLast+1))..$(($checkLast+11))})
 do
@@ -124,7 +129,7 @@ sudo tee -a /etc/wireguard/wg0.conf > /dev/null <<EOF
 
 [Peer]
 PublicKey = $(cat /etc/wireguard/$ACC_NUM'_nntlast_public')
-AllowedIPs = 10.$ACC_NUM.$checkNTLast.$checkLast/32
+AllowedIPs = 10.$ACC_NUM.$checkNTLast.0/32
 EOF
 
 systemctl restart wg-quick@wg0.service && sleep 2
@@ -140,7 +145,7 @@ do
 echo "
 [Interface]
 PrivateKey = $(cat /etc/wireguard/$ACC_NUM'_nntlast_private')
-Address = 10.$ACC_NUM.0.0/32
+Address = 10.$ACC_NUM.$checkNTLast.0/32
 DNS = 8.8.8.8
 
 [Peer]
