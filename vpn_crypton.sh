@@ -16,6 +16,7 @@ echo -e '\n\e[42mStarting Wireguard Installation\e[0m\n' && sleep 2
 apt update && apt upgrade -y
 
 apt install ufw  -y
+apt install qrencode
 sudo ufw allow 51820/udp && sudo ufw reload
 
 apt install wireguard -y 
@@ -71,7 +72,24 @@ DNS = 8.8.8.8
 PublicKey = $(cat /etc/wireguard/publickey)
 Endpoint = $(wget -qO- eth0.me):51820
 AllowedIPs = 0.0.0.0/0  
-PersistentKeepalive = 20" 
+PersistentKeepalive = 20
+
+" 
+sudo tee qr.conf > /dev/null <<EOF
+[Interface]
+PrivateKey = $(cat /etc/wireguard/$ACC_NUM'_private')
+Address = 10.0.0.$ACC_NUM/32
+DNS = 8.8.8.8
+
+[Peer]
+PublicKey = $(cat /etc/wireguard/publickey)
+Endpoint = $(wget -qO- eth0.me):51820
+AllowedIPs = 0.0.0.0/0  
+PersistentKeepalive = 20
+EOF
+qrencode -t ansiutf8 < qr.conf
+
+echo -e "\n"
 echo -e "\n\e[42m###################################\e[0m\n"
 done
 
