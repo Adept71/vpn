@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 echo -e '\e[40m\e[91m'
