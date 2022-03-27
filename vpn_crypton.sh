@@ -13,27 +13,23 @@ sleep 2
 
 echo -e '\n\e[42mStarting Wireguard Installation\e[0m\n' && sleep 2
 
+apt update && apt upgrade -y
+
+apt install ufw  -y
 sudo ufw allow 51820/udp && sudo ufw reload
 
-apt update && apt upgrade -y
 apt install wireguard -y 
 
 wg genkey | tee /etc/wireguard/privatekey | wg pubkey | tee /etc/wireguard/publickey
 chmod 600 /etc/wireguard/privatekey
-
-IP=$(wget -qO- eth0.me)
-NETWORK_INTERFACE=$(ip a | grep -oP '(?<=2: ).*' | grep -o '^....')
-echo 'export IP='$IP >> $HOME/.bash_profile
-echo 'export NETWORK_INTERFACE='${NETWORK_INTERFACE} >> $HOME/.bash_profile
-source $HOME/.bash_profile
 
 sudo tee /etc/wireguard/wg0.conf > /dev/null <<EOF
 [Interface]
 PrivateKey = $(cat /etc/wireguard/privatekey)
 Address = 10.0.0.1/24
 ListenPort = 51820
-PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o $NETWORK_INTERFACE -j MASQUERADE
-PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o $NETWORK_INTERFACE -j MASQUERADE
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o $(ip a | grep -oP '(?<=2: ).*' | grep -o '^....') -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o $(ip a | grep -oP '(?<=2: ).*' | grep -o '^....') -j MASQUERADE
 EOF
 
 sysctl -w net.ipv4.ip_forward=1
@@ -44,7 +40,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable wg-quick@wg0.service
 sudo systemctl start wg-quick@wg0.service
 
-echo -e '\n\e[42mGenerating keys for confs\e[0m\n' && sleep 2
+echo -e '\n\e[42mGenerating keys for confings\e[0m\n' && sleep 2
 
 for ACC_NUM in {2..11} 
 do
@@ -73,7 +69,7 @@ DNS = 8.8.8.8
 
 [Peer]
 PublicKey = $(cat /etc/wireguard/publickey)
-Endpoint = $IP:51820
+Endpoint = $(wget -qO- eth0.me):51820
 AllowedIPs = 0.0.0.0/0  
 PersistentKeepalive = 20" 
 echo -e "\n\e[42m###################################\e[0m\n"
