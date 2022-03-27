@@ -140,7 +140,7 @@ do
 echo "
 [Interface]
 PrivateKey = $(cat /etc/wireguard/$ACC_NUM'_nntlast_private')
-Address = 10.$ACC_NUM.$checkNTLast.$checkLast/32
+Address = 10.$ACC_NUM.0.0/32
 DNS = 8.8.8.8
 
 [Peer]
@@ -158,6 +158,3 @@ done
 else
   echo -e '\n\e[41m\e[30mNo more configs can be generated\e[0m\n' && sleep 2
 fi
-
-
-
