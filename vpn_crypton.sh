@@ -16,7 +16,7 @@ echo -e '\n\e[42mStarting Wireguard Installation\e[0m\n' && sleep 2
 apt update && apt upgrade -y
 
 apt install ufw  -y
-apt install qrencode
+apt install qrencode -y
 sudo ufw allow 51820/udp && sudo ufw reload
 
 apt install wireguard -y 
