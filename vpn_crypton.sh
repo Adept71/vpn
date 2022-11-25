@@ -43,7 +43,7 @@ sudo systemctl start wg-quick@wg0.service
 
 echo -e '\n\e[42mGenerating keys for confings\e[0m\n' && sleep 2
 
-for ACC_NUM in {2..200} 
+for ACC_NUM in {2..100} 
 do
 wg genkey | tee /etc/wireguard/$ACC_NUM'_private' | wg pubkey | tee /etc/wireguard/$ACC_NUM'_public'
 sudo tee -a /etc/wireguard/wg0.conf > /dev/null <<EOF
