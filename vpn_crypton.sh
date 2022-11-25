@@ -60,7 +60,7 @@ echo -e '\n\e[42m==================================================\e[0m\n'
 echo -e '\n\e[42mSAVE ALL DATA BELOW\e[0m\n' && sleep 2
 echo -e '\n\e[42m==================================================\e[0m\n'
 
-for ACC_NUM in {2..200} 
+for ACC_NUM in {2..100} 
 do 
 echo "
 [Interface]
